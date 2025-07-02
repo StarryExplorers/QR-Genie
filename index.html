@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>QR Genie ✨</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="icon-192.png">
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #d9a7c7, #fffcdc);
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem;
+      min-height: 100vh;
+      text-align: center;
+    }
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+    input {
+      width: 100%;
+      max-width: 400px;
+      padding: 1rem;
+      font-size: 1rem;
+      margin-bottom: 1rem;
+      border-radius: 0.8rem;
+      border: 1px solid #ccc;
+    }
+    button {
+      padding: 1rem 2rem;
+      font-size: 1rem;
+      border: none;
+      border-radius: 1rem;
+      background-color: #6a11cb;
+      color: white;
+      cursor: pointer;
+      margin-bottom: 1rem;
+    }
+    canvas {
+      margin-top: 1rem;
+    }
+    #downloadBtn {
+      margin-top: 1rem;
+      background-color: #11998e;
+    }
+  </style>
+</head>
+<body>
+  <h1>✨ QR Genie</h1>
+  <input type="text" id="text" placeholder="Enter text or link here">
+  <button onclick="generateQR()">Generate QR</button>
+  <div id="qr"></div>
+  <button id="downloadBtn" style="display:none;" onclick="downloadQR()">Download QR</button>
+
+  <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+  <script>
+    function generateQR() {
+      const text = document.getElementById('text').value.trim();
+      const qrContainer = document.getElementById('qr');
+      const downloadBtn = document.getElementById('downloadBtn');
+      qrContainer.innerHTML = '';
+      downloadBtn.style.display = 'none';
+
+      if (!text) {
+        alert("Please enter some text!");
+        return;
+      }
+
+      QRCode.toCanvas(text, { width: 256 }, function (err, canvas) {
+        if (err) {
+          alert("QR failed to generate.");
+          return;
+        }
+        qrContainer.appendChild(canvas);
+        downloadBtn.style.display = 'inline-block';
+      });
+    }
+
+    function downloadQR() {
+      const canvas = document.querySelector('#qr canvas');
+      const link = document.createElement('a');
+      link.download = 'qr-genie.png';
+      link.href = canvas.toDataURL();
+      link.click();
+    }
+
+    // Register service worker
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('service-worker.js');
+    }
+  </script>
+</body>
+</html>
